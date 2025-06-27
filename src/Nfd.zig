@@ -65,8 +65,6 @@ pub fn open(self: *Self, options: NFDOpenOptions) !SingleDialogResult {
     };
     defer self.allocator.free(filters);
 
-    //
-
     for (options.filters, 0..) |f, i| {
         filters[i] = .{
             .name = f.name.ptr,
