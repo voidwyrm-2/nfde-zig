@@ -1,7 +1,15 @@
 const std = @import("std");
+const builtin = @import("builtin");
 
 pub fn build(b: *std.Build) !void {
-    const target = b.standardTargetOptions(.{});
+    const target =
+        if (builtin.os.tag == .windows)
+            b.resolveTargetQuery(.{
+                .abi = .msvc,
+            })
+        else
+            b.standardTargetOptions(.{});
+
     const optimize = b.standardOptimizeOption(.{});
 
     const lib = b.addStaticLibrary(.{
@@ -19,9 +27,15 @@ pub fn build(b: *std.Build) !void {
     const build_os = lib.root_module.resolved_target.?.result.os.tag;
 
     if (build_os == .windows) {
+        lib.linkLibCpp();
+        lib.linkSystemLibrary("unwind");
+
         lib.addCSourceFile(.{
             .file = b.path("nativefiledialog-extended/src/nfd_win.cpp"),
             .language = .cpp,
+            .flags = &.{
+                "-fno-exceptions",
+            },
         });
     } else if (build_os == .macos) {
         lib.linkSystemLibrary("objc");
@@ -36,6 +50,16 @@ pub fn build(b: *std.Build) !void {
         });
     } else {
         const use_portal = b.option(bool, "use-portal", "Use portal for the window backend on Linux instead of GTK.") orelse false;
+
+        lib.linkLibCpp();
+
+        if (use_portal) {
+            lib.linkSystemLibrary2("xdg-desktop-portal", .{ .use_pkg_config = .force });
+            lib.linkSystemLibrary2("dbus-1", .{ .use_pkg_config = .force });
+        } else {
+            lib.linkSystemLibrary2("gtk+-3.0", .{ .use_pkg_config = .force });
+            lib.linkSystemLibrary2("gdk-3.0", .{ .use_pkg_config = .force });
+        }
 
         const window_backend =
             if (use_portal)
