@@ -28,6 +28,7 @@ pub fn build(b: *std.Build) !void {
 
     if (build_os == .windows) {
         lib.linkLibCpp();
+        lib.linkLibC();
         lib.linkSystemLibrary("unwind");
 
         lib.addCSourceFile(.{

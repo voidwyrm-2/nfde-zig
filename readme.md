@@ -7,9 +7,9 @@ A wrapper around the [nativefiledialog-extended](https://github.com/btzy/nativef
 ### Windows
 
 Fails when using the MSVC ABI.
-```
-error: error: unable to create compilation: LibCStdLibHeaderNotFound
-```
+
+The error message is in a Pastebin because it's so large
+https://pastebin.com/raw/EGgDNKnf
 
 ### MacOS
 
