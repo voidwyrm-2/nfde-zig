@@ -2,6 +2,23 @@
 
 A wrapper around the [nativefiledialog-extended](https://github.com/btzy/nativefiledialog-extended) library.
 
+## Current Build Status
+
+### Windows
+
+Fails when using the MSVC ABI.
+```
+error: error: unable to create compilation: LibCStdLibHeaderNotFound
+```
+
+### MacOS
+
+Builds successfully, but `open` doesn't give back a string when called and it doesn't allocate for it.
+
+### Linux
+
+Builds successfully.
+
 ## Installation
 
 Install the library with `zig fetch --save git+https://github.com/voidwyrm-2/nfde-zig`.
